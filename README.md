@@ -61,7 +61,7 @@ Policy Evaluation
 
 ## Key Features
 
-### 🔍 PII Detection
+###  PII Detection
 
 Detects sensitive entities in user prompts, including:
 
@@ -80,7 +80,7 @@ Detects sensitive entities in user prompts, including:
 * `ACCOUNT_NUMBER`
 * `CREDENTIAL`
 
-### 🛡️ Risk Assessment
+###  Risk Assessment
 
 Each detected entity contributes to a privacy risk assessment.
 
@@ -92,7 +92,7 @@ MEDIUM
 HIGH
 ```
 
-### 🔐 Policy-Based Protection
+###  Policy-Based Protection
 
 Different entity types can be assigned different actions:
 
@@ -110,7 +110,7 @@ Different entity types can be assigned different actions:
 
 This policy-driven approach allows the gateway to be adapted to different privacy requirements.
 
-### ✨ Prompt Sanitization
+###  Prompt Sanitization
 
 Sensitive information can be transformed before reaching the LLM.
 
@@ -124,19 +124,19 @@ Sanitized:
 Contact me at [EMAIL_1] regarding my account.
 ```
 
-### 🤖 LLM Gateway
+###  LLM Gateway
 
 PrivAI Guard supports a mock LLM mode for development and testing and can be configured for an external LLM provider through environment variables.
 
-### 🔎 Response Scanning
+###  Response Scanning
 
 The gateway also analyzes the generated LLM response for sensitive information before returning it to the user.
 
-### 🔑 Authentication
+###  Authentication
 
 The backend provides authentication endpoints for registering and logging into the application.
 
-### ⚙️ Configurable Security
+###  Configurable Security
 
 Security behavior can be configured through environment variables and policy settings, including:
 
