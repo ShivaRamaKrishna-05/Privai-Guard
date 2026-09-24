@@ -1,120 +1,567 @@
-ShivaRamaKrishna-05
-Privai-Guard
-Public
-Go to file
-t
-T
-author
-Your Name
-Initial commit: PrivAI Guard
-1732c85
- · 
-13 minutes ago
-Name		
-backend
-Initial commit: PrivAI Guard
-13 minutes ago
-docs
-Initial commit: PrivAI Guard
-13 minutes ago
-frontend
-Initial commit: PrivAI Guard
-13 minutes ago
-.gitignore
-Initial commit: PrivAI Guard
-13 minutes ago
-README.md
-Initial commit: PrivAI Guard
-13 minutes ago
-docker-compose.yml
-Initial commit: PrivAI Guard
-13 minutes ago
-Repository files navigation
-README
-Security
-PrivAI Guard
-AI-powered privacy gateway for LLM applications.
+# PrivAI Guard
 
-Flow
-User prompt → PII detection → contextual/risk analysis → policy → anonymize/mask/block → safe prompt → LLM → response scan → safe response.
+### AI Security Gateway for Privacy-Preserving LLM Applications
 
-Run with Docker
+PrivAI Guard is an AI security and privacy gateway designed to protect sensitive information before it reaches a Large Language Model (LLM).
+
+It detects Personally Identifiable Information (PII), evaluates privacy risk, applies configurable security policies, sanitizes prompts through anonymization or masking, blocks high-risk requests, and scans LLM responses for sensitive information.
+
+---
+
+## Overview
+
+When users interact with LLM applications, prompts may unintentionally contain sensitive information such as:
+
+* Email addresses
+* Phone numbers
+* IP addresses
+* Physical addresses
+* Government IDs
+* Account numbers
+* Financial information
+* Credentials
+* Personal names and organizations
+
+PrivAI Guard acts as an intermediate security layer between the user and the LLM.
+
+### Security Pipeline
+
+```text
+User Prompt
+     │
+     ▼
+PII Detection
+     │
+     ▼
+Risk & Context Analysis
+     │
+     ▼
+Policy Evaluation
+     │
+     ├── BLOCK ──────────────► Request Rejected
+     │
+     ├── MASK / ANONYMIZE
+     │          │
+     │          ▼
+     │     Sanitized Prompt
+     │          │
+     │          ▼
+     │         LLM
+     │          │
+     │          ▼
+     │    Response Scanner
+     │          │
+     │          ▼
+     │     Safe Response
+     │
+     └── ALLOW ──────────────► LLM
+```
+
+---
+
+## Key Features
+
+### 🔍 PII Detection
+
+Detects sensitive entities in user prompts, including:
+
+* `PERSON`
+* `ORG`
+* `GPE`
+* `LOC`
+* `EMAIL`
+* `PHONE`
+* `IP_ADDRESS`
+* `URL`
+* `ADDRESS`
+* `CREDIT_CARD`
+* `FINANCIAL`
+* `GOVERNMENT_ID`
+* `ACCOUNT_NUMBER`
+* `CREDENTIAL`
+
+### 🛡️ Risk Assessment
+
+Each detected entity contributes to a privacy risk assessment.
+
+The gateway categorizes requests into risk levels such as:
+
+```text
+LOW
+MEDIUM
+HIGH
+```
+
+### 🔐 Policy-Based Protection
+
+Different entity types can be assigned different actions:
+
+| Entity        | Example Action |
+| ------------- | -------------- |
+| EMAIL         | ANONYMIZE      |
+| PHONE         | MASK           |
+| IP_ADDRESS    | MASK           |
+| ADDRESS       | ANONYMIZE      |
+| CREDIT_CARD   | BLOCK          |
+| FINANCIAL     | BLOCK          |
+| GOVERNMENT_ID | BLOCK          |
+| CREDENTIAL    | BLOCK          |
+| URL           | ALLOW          |
+
+This policy-driven approach allows the gateway to be adapted to different privacy requirements.
+
+### ✨ Prompt Sanitization
+
+Sensitive information can be transformed before reaching the LLM.
+
+Example:
+
+```text
+Original:
+Contact me at john@example.com regarding my account.
+
+Sanitized:
+Contact me at [EMAIL_1] regarding my account.
+```
+
+### 🤖 LLM Gateway
+
+PrivAI Guard supports a mock LLM mode for development and testing and can be configured for an external LLM provider through environment variables.
+
+### 🔎 Response Scanning
+
+The gateway also analyzes the generated LLM response for sensitive information before returning it to the user.
+
+### 🔑 Authentication
+
+The backend provides authentication endpoints for registering and logging into the application.
+
+### ⚙️ Configurable Security
+
+Security behavior can be configured through environment variables and policy settings, including:
+
+* LLM provider
+* Model configuration
+* Transformer detection
+* Detection threshold
+* Maximum input length
+* Rate limits
+* Privacy policies
+
+---
+
+## Architecture
+
+```text
+                    ┌─────────────────────┐
+                    │     Web Client      │
+                    │      Frontend       │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │    FastAPI Backend  │
+                    └──────────┬──────────┘
+                               │
+              ┌────────────────┼────────────────┐
+              │                │                │
+              ▼                ▼                ▼
+       ┌─────────────┐  ┌─────────────┐  ┌─────────────┐
+       │ PII Detector│  │ Risk Engine │  │Policy Engine│
+       └──────┬──────┘  └──────┬──────┘  └──────┬──────┘
+              │                │                │
+              └────────────────┼────────────────┘
+                               ▼
+                    ┌─────────────────────┐
+                    │ Prompt Sanitization │
+                    │ Mask / Anonymize /  │
+                    │       Block         │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │     LLM Gateway     │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │ Response Detection  │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                         Safe Response
+```
+
+---
+
+## Technology Stack
+
+### Backend
+
+* Python
+* FastAPI
+* Uvicorn
+* MongoDB
+* Motor
+* JWT Authentication
+* spaCy
+* Hugging Face Transformers
+* PyTorch
+* LangChain
+
+### Frontend
+
+* React
+* Vite
+* JavaScript
+* HTML5
+* CSS3
+
+### Infrastructure
+
+* Docker
+* Docker Compose
+* Git
+* GitHub
+
+---
+
+## Project Structure
+
+```text
+Privai-Guard/
+│
+├── backend/
+│   ├── app/
+│   │   ├── auth/
+│   │   ├── detectors/
+│   │   ├── llm/
+│   │   ├── privacy/
+│   │   └── main.py
+│   │
+│   ├── requirements.txt
+│   └── .env.example
+│
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── vite.config.js
+│
+├── docs/
+│
+├── docker-compose.yml
+├── .gitignore
+└── README.md
+```
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+Make sure you have the following installed:
+
+* Python 3.11+
+* Node.js
+* npm
+* Docker Desktop (optional)
+* MongoDB
+
+---
+
+## Run with Docker
+
+Clone the repository:
+
+```bash
+git clone https://github.com/ShivaRamaKrishna-05/Privai-Guard.git
+cd Privai-Guard
+```
+
+Start the application:
+
+```bash
 docker compose up --build
+```
 
-Frontend: http://localhost:5173 Backend: http://localhost:8000 Swagger: http://localhost:8000/docs
+The application will be available at:
 
-Local backend
-cd backend python -m venv .venv .venv\Scripts\activate pip install -r requirements.txt copy .env.example .env uvicorn app.main:app --reload
+```text
+Frontend:  http://localhost:5173
+Backend:   http://localhost:8000
+Swagger:   http://localhost:8000/docs
+```
 
-Register
-POST /api/v1/auth/register { "email": "student@example.com", "password": "StrongPassword123!" }
+---
 
-Default LLM
-LLM_PROVIDER=mock requires no external API key. An optional LangChain/OpenAI provider can be enabled through environment variables.
+## Run Backend Locally
 
-Transformer
-TRANSFORMER_ENABLED=false by default so the system can start without downloading a model. Enable it when needed.
+Navigate to the backend:
 
-Important
-Use synthetic test data only. Never commit .env or real secrets. This project is an educational final-year project foundation and requires additional hardening before production use.
+```bash
+cd backend
+```
 
-About
+Create a virtual environment:
 
-AI Security Gateway for detecting, scoring, and sanitizing sensitive information in LLM prompts
+```bash
+python -m venv .venv
+```
 
-Resources
-Readme
-Security policy
-Security policy
-Activity
-Stars
-0 stars
-Watchers
-0 watching
-Forks
-0 forks
-Releases
-No releases published
-Create a new release
-Packages
-No packages published
-Publish your first package
-Contributors
-No contributors
-Languages
-Python
-78.3%
-JavaScript
-19.8%
-Dockerfile
-1.1%
-HTML
-0.8%
-Suggested workflows
-Based on your tech stack
+Activate it on Windows:
 
-Python package logo
-Python package
-Create and test a Python package on multiple Python versions.
-By GitHub Actions
-Publish Python Package logo
-Publish Python Package
-Publish a Python Package to PyPI on release.
-By GitHub Actions
-Pylint logo
-Pylint
-Lint a Python application with pylint.
-By GitHub Actions
-More workflows
-Footer
-© 2026 GitHub, Inc.
-Footer navigation
-Terms
-Privacy
-Security
-Status
-Community
-Docs
-Contact
-Manage cookies
-Do not share my personal information
+```powershell
+.venv\Scripts\activate
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Create your environment file:
+
+```powershell
+copy .env.example .env
+```
+
+Configure the required environment variables and start the server:
+
+```bash
+python -m uvicorn app.main:app --reload
+```
+
+Backend:
+
+```text
+http://localhost:8000
+```
+
+Swagger API documentation:
+
+```text
+http://localhost:8000/docs
+```
+
+---
+
+## Run Frontend Locally
+
+Open another terminal:
+
+```bash
+cd frontend
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Frontend:
+
+```text
+http://localhost:5173
+```
+
+---
+
+## Authentication
+
+### Register
+
+```http
+POST /api/v1/auth/register
+```
+
+Example request:
+
+```json
+{
+  "email": "student@example.com",
+  "password": "StrongPassword123!"
+}
+```
+
+### Login
+
+```http
+POST /api/v1/auth/login
+```
+
+Authentication is required for protected privacy and chat operations.
+
+---
+
+## Privacy Analysis
+
+PrivAI Guard exposes privacy-analysis functionality through the backend API.
+
+A typical analysis performs:
+
+```text
+Input
+  ↓
+Entity Detection
+  ↓
+Risk Calculation
+  ↓
+Policy Lookup
+  ↓
+Action Selection
+  ↓
+Sanitization
+```
+
+Possible actions include:
+
+```text
+ALLOW
+MASK
+ANONYMIZE
+BLOCK
+```
+
+---
+
+## Example
+
+### Input
+
+```text
+My name is John and my email is john@example.com.
+Please contact me about my account.
+```
+
+### Detection
+
+```text
+PERSON → John
+EMAIL  → john@example.com
+```
+
+### Policy
+
+```text
+PERSON → ANONYMIZE
+EMAIL  → ANONYMIZE
+```
+
+### Sanitized Prompt
+
+```text
+My name is [PERSON_1] and my email is [EMAIL_1].
+Please contact me about my account.
+```
+
+The sanitized prompt can then be forwarded to the configured LLM provider.
+
+---
+
+## Configuration
+
+PrivAI Guard uses environment variables for application configuration.
+
+Example:
+
+```env
+LLM_PROVIDER=mock
+TRANSFORMER_ENABLED=false
+```
+
+The mock provider can be used for development without requiring an external LLM API key.
+
+Do not commit your actual `.env` file.
+
+---
+
+## Security Considerations
+
+PrivAI Guard is intended as an educational and development project demonstrating privacy protection for LLM applications.
+
+For production deployment, additional security hardening should be performed, including:
+
+* Secure secret management
+* Strong authentication configuration
+* HTTPS/TLS
+* Production database security
+* Rate-limit tuning
+* Logging and monitoring
+* Input validation
+* Dependency security scanning
+* Comprehensive security testing
+* Secure deployment configuration
+
+**Never use real personal information or production credentials for testing.**
+
+Use synthetic test data instead.
+
+---
+
+## Current Scope
+
+The project currently demonstrates:
+
+* PII detection
+* Privacy risk assessment
+* Policy-based actions
+* Prompt anonymization
+* Prompt masking
+* Request blocking
+* LLM gateway integration
+* Response scanning
+* Authentication
+* REST APIs
+* Docker-based deployment
+
+---
+
+## Future Improvements
+
+Potential future enhancements include:
+
+* Advanced contextual PII detection
+* More sophisticated risk scoring
+* Additional LLM providers
+* Improved response sanitization
+* Policy management through the UI
+* Audit logging
+* Security analytics dashboard
+* Role-based access control
+* Automated security testing
+* Production-ready deployment
+
+---
+
+## Disclaimer
+
+This project is developed for educational and research purposes.
+
+It demonstrates concepts related to privacy protection and security for LLM-based applications and should not be considered a complete production security solution without additional security review and hardening.
+
+---
+
+## Author
+
+**Shiva Rama Krishna Konda**
+
+Computer Science Engineering
+Guru Nanak Institute of Technology, Hyderabad
+
+GitHub: [ShivaRamaKrishna-05](https://github.com/ShivaRamaKrishna-05)
+
+---
+
+## License
+
+This project is intended for educational and research purposes.
